@@ -4,17 +4,15 @@ import os
 from pyspark.sql import SparkSession
 from pyspark.sql import Window
 from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, udf, col, row_number, date_format
-# from pyspark.sql.functions import date_format, to_timestamp,from_utc_timestamp, from_unixtime
 from pyspark.sql.types import TimestampType
 
 
 
 config = configparser.ConfigParser()
-# config.read('dl.cfg')
+config.read('dl.cfg')
 
-# os.environ['AWS_ACCESS_KEY_ID']=config['AWS_ACCESS_KEY_ID']
-# os.environ['AWS_SECRET_ACCESS_KEY']=config['AWS_SECRET_ACCESS_KEY']
-
+os.environ['AWS_ACCESS_KEY_ID']=config['KEYS']['AWS_ACCESS_KEY_ID']
+os.environ['AWS_SECRET_ACCESS_KEY']=config['KEYS']['AWS_SECRET_ACCESS_KEY']
 
 def create_spark_session():
     spark = SparkSession \
@@ -26,10 +24,10 @@ def create_spark_session():
 
 def process_song_data(spark, input_data, output_data):
     # get filepath to song data file
-    # song_data = input_data + "song-data" 
+    song_data = input_data + "song_data"
     # When testing, work with smaller dataset
-    song_data=input_data
-    
+    # song_data = input_data + "song-data/A/A/*" 
+
     # read song data file
     df = spark.read.json(song_data)    
     
@@ -82,10 +80,10 @@ def process_song_data(spark, input_data, output_data):
 
 def process_log_data(spark, input_data, output_data):
     # get filepath to log data file
-#     log_data = input_data + "log-data"
+    log_data = input_data + "log_data"    
     # When testing, work with smaller dataset locally. 
     # The local folder only has one file. 
-    log_data = input_data
+    # log_data = input_data
 
     # read log data file
     df = spark.read.json(log_data)    
@@ -155,10 +153,11 @@ def process_log_data(spark, input_data, output_data):
    
     #  Generate songsplay table.
 
-    # read song data file
-    # song_data = input_data + "song-data" 
-    # For testing.
-    song_data = input_data = "data/song-data/TRAAAAW128F429D538.json"
+    # read song data file    
+    # When testing, work with smaller dataset
+    # song_data = input_data + "song_data/A/A/*" 
+    
+    song_data = input_data + "song_data"
     songs_df = spark.read.json(song_data)    
     
     #  Create view to query songs data.
@@ -196,13 +195,9 @@ def process_log_data(spark, input_data, output_data):
     
 def main():
     spark = create_spark_session()
-#     input_data = "s3a://udacity-dend/"
-#     output_data = "s3a://uda-oregon-sps-s3/"
+    input_data = "s3a://udacity-dend/"
+    output_data = "s3a://aws-emr-resources-156719884113-us-west-2/output"
     
-    # Enable when testing locally
-    input_data = "data/song-data/TRAAAAW128F429D538.json"
-    log_input_data = "data/log-data/2018-11-01-events.json"
-    output_data = "data/"
 
     print("..............Populating tables..............")        
     process_song_data(spark, input_data, output_data)
@@ -212,3 +207,4 @@ def main():
     
 if __name__ == "__main__":
     main()
+
