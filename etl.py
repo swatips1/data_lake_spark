@@ -6,6 +6,7 @@ from pyspark.sql import Window
 from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, udf, col, row_number, date_format
 from pyspark.sql.types import TimestampType, StructType, StructField, StringType, DecimalType, LongType, IntegerType
 
+# The problems/errors encoutered while developing this script were resolved with the help of google, stackoverflow and udacity mentor/knowledge base.
 config = configparser.ConfigParser()
 config.read('dl.cfg')
 
