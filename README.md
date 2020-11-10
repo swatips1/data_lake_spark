@@ -19,9 +19,20 @@ The DB Schema consists of the following:
     
 To run:
 The ETL process is quite simple to execute:
-1) Launch a Redshit cluster in the same region as the S3 bucket. Make sure the IAM user and security group is propery configured and linked to the cluster.
-2) Make sure all parameters in dl.cfg are configured with valid information.
+To run on EMR:
+1) Launch a EMR in the same region as the S3 bucket. Make sure the IAM user and security group is propery configured and linked to the cluster.
+2) Make sure the EMR is correctly configured for SSH and Firefox connectivity.
+3) Make sure all parameters in dl.cfg are configured with valid information.
+4) Make sure you are reading and writing from the correct S3 buckets and that they reside in the same region.
+5) Upload relevant files into the cluster and run the process.
+
+To run locally:
+1) Make sure the EMR is correctly configured for SSH and Firefox connectivity.
+2) Make sure you are reading and writing from the correct S3 buckets and that they reside in the same region.
 3) Run test.ipynb
     NOTE: It is best to make sure the Kernel is in proper state. One way would be to re-start the Kernel prior to repeate runs. 
 
-    
+To see the output:
+1) Login to your Amazon account. 
+2) Navigate to the S3 bucket the etl was writing to. 
+3) Make sure you see expected output file. e.g. artists_table.parquet/
