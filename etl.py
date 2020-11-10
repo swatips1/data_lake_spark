@@ -200,7 +200,7 @@ def main():
 
     print("..............Populating tables..............")        
     process_song_data(spark, input_data, output_data)
-    process_log_data(spark, log_input_data, output_data)
+    process_log_data(spark, input_data, output_data)
     print("..............Population complete............")
     spark.stop();
     
