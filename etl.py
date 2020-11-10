@@ -4,15 +4,38 @@ import os
 from pyspark.sql import SparkSession
 from pyspark.sql import Window
 from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, udf, col, row_number, date_format
-from pyspark.sql.types import TimestampType
-
-
+from pyspark.sql.types import TimestampType, StructType, StructField, StringType, DecimalType, LongType, IntegerType
 
 config = configparser.ConfigParser()
 config.read('dl.cfg')
 
 os.environ['AWS_ACCESS_KEY_ID']=config['KEYS']['AWS_ACCESS_KEY_ID']
 os.environ['AWS_SECRET_ACCESS_KEY']=config['KEYS']['AWS_SECRET_ACCESS_KEY']
+
+def specify_log_schema():    
+    schema = StructType(        
+     [            
+      StructField('artist', StringType(), True),            
+      StructField('auth', StringType(), True),            
+      StructField('firstName', StringType(), True),            
+      StructField('gender', StringType(), True),            
+      StructField('itemInSession', IntegerType(), True),            
+      StructField('lastName', StringType(), True),            
+      StructField('length', DecimalType(), True),            
+      StructField('level', StringType(), True),            
+      StructField('location', StringType(), True),            
+      StructField('method', StringType(), True),            
+      StructField('page', StringType(), True),            
+      StructField('registration', LongType(), True),            
+      StructField('sessionId', IntegerType(), True),            
+      StructField('song', StringType(), True),            
+      StructField('status', IntegerType(), True),            
+      StructField('ts', LongType(), True),            
+      StructField('userAgent', StringType(), True),            
+      StructField('userId', StringType(), True)        
+     ]    
+    )   
+    return schema
 
 def create_spark_session():
     spark = SparkSession \
@@ -28,6 +51,7 @@ def process_song_data(spark, input_data, output_data):
     # When testing, work with smaller dataset
     # song_data = input_data + "song-data/A/B/C/TRABCEI128F424C983.json" 
 
+    print("processing songs table ......................")    
     # read song data file
     df = spark.read.json(song_data)    
     
@@ -54,6 +78,7 @@ def process_song_data(spark, input_data, output_data):
     songs_table.write.mode("overwrite").partitionBy("year","artist_id").parquet(songs_table_path)
     print(".............................................")
     
+    print("processing artists table ....................")    
     #  Create view to query artists data.
     df.createOrReplaceTempView("base_artists_tbl")
 
@@ -80,16 +105,18 @@ def process_song_data(spark, input_data, output_data):
 
 def process_log_data(spark, input_data, output_data):
     # get filepath to log data file
-    log_data = input_data + "log_data"    
-    # When testing, work with smaller dataset locally. Make sure to have only one file in the local folder.
-    # log_data = input_data
+    log_data = input_data + "log-data"    
+    
+    # Populate schema
+    log_schema = specify_log_schema()   
 
     # read log data file
-    df = spark.read.json(log_data)    
+    df = spark.read.json(log_data, schema=log_schema)
 
     # filter by actions for song plays
     df = df.filter(df.page == 'NextSong')
 
+    print("processing user table .......................")   
     #  Create view to query songs data.
     df.createOrReplaceTempView("base_user_table")
 
@@ -128,6 +155,7 @@ def process_log_data(spark, input_data, output_data):
     user_table.write.mode("overwrite").parquet(user_table_path)
     print(".............................................")
     
+    print("processing time table .......................")
     # Generate time table.
     # UDF to convert column
     get_timestamp = udf(lambda x: datetime.fromtimestamp((x/1000.0)), TimestampType())
@@ -154,9 +182,10 @@ def process_log_data(spark, input_data, output_data):
 
     # read song data file    
     # When testing, work with smaller dataset
-    # song_data = input_data + "song_data/A/B/C/TRABCEI128F424C983.json" 
-    
-    song_data = input_data + "song_data"
+    song_data = input_data + "song_data/A/B/C/TRABCEI128F424C983.json" 
+
+    print("processing songplay table....................")
+    # song_data = input_data + "song_data"
     songs_df = spark.read.json(song_data)    
     
     #  Create view to query songs data.
@@ -206,4 +235,3 @@ def main():
     
 if __name__ == "__main__":
     main()
-
