@@ -24,9 +24,9 @@ def create_spark_session():
 
 def process_song_data(spark, input_data, output_data):
     # get filepath to song data file
-#     song_data = input_data + "song_data"
+     song_data = input_data + "song_data"
     # When testing, work with smaller dataset
-    song_data = input_data + "song-data/A/B/C/TRABCEI128F424C983.json" 
+    # song_data = input_data + "song-data/A/B/C/TRABCEI128F424C983.json" 
 
     # read song data file
     df = spark.read.json(song_data)    
@@ -81,8 +81,7 @@ def process_song_data(spark, input_data, output_data):
 def process_log_data(spark, input_data, output_data):
     # get filepath to log data file
     log_data = input_data + "log_data"    
-    # When testing, work with smaller dataset locally. 
-    # The local folder only has one file. 
+    # When testing, work with smaller dataset locally. Make sure to have only one file in the local folder.
     # log_data = input_data
 
     # read log data file
@@ -155,9 +154,9 @@ def process_log_data(spark, input_data, output_data):
 
     # read song data file    
     # When testing, work with smaller dataset
-    song_data = input_data + "song_data/A/B/C/TRABCEI128F424C983.json" 
+    # song_data = input_data + "song_data/A/B/C/TRABCEI128F424C983.json" 
     
-#     song_data = input_data + "song_data"
+    song_data = input_data + "song_data"
     songs_df = spark.read.json(song_data)    
     
     #  Create view to query songs data.
@@ -196,7 +195,7 @@ def process_log_data(spark, input_data, output_data):
 def main():
     spark = create_spark_session()
     input_data = "s3a://udacity-dend/"
-    output_data = "s3a://aws-emr-resources-156719884113-us-west-2/output"
+    output_data = "s3a://aws-emr-resources-156719884113-us-west-2/output/"
     
 
     print("..............Populating tables..............")        
